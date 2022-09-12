@@ -1,0 +1,6 @@
+venv/
+.env
+.idea
+__pycache__/
+db_data_warehouse
+db_data_store

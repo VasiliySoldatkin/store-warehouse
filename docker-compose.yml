@@ -1,0 +1,53 @@
+version: '3.3'
+services:
+  store_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.store
+    container_name: store
+    entrypoint: [ './wait-for-db.sh', 'store_db:5432', '--', './entrypoint.sh' ]
+    environment:
+      POSTGRES_URI: 'postgres://postgres:root@store_db:5432/store'
+      SECRET_KEY: 'asdagasa'
+    ports:
+      - "8001:8001"
+
+  store_db:
+    image: postgres
+    container_name: store_db
+    environment:
+      POSTGRES_DB: "store"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+
+    volumes:
+      - ./:/docker-entrypoint-initdb.d
+      - ./db_data_store:/var/lib/postgresql/data
+
+  warehouse_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.warehouse
+    environment:
+      POSTGRES_URI: 'postgres://postgres:root@warehouse_db:5432/warehouse'
+      SECRET_KEY: 'GASDASDDsadsad'
+    container_name: warehouse
+    depends_on:
+      - warehouse_db
+    entrypoint: ['./wait-for-db.sh', 'warehouse_db:5432', '--', './entrypoint.sh']
+    ports:
+      - "8000:8000"
+
+  warehouse_db:
+    image: postgres
+    container_name: warehouse_db
+    environment:
+      POSTGRES_DB: "warehouse"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ./:/docker-entrypoint-initdb.d
+      - ./db_data_warehouse:/var/lib/postgresql/data
+
