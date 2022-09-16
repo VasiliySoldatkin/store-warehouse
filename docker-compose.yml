@@ -9,6 +9,7 @@ services:
     environment:
       POSTGRES_URI: 'postgres://postgres:root@store_db:5432/store'
       SECRET_KEY: 'asdagasa'
+      DEBUG: 'True'
     ports:
       - "8001:8001"
 
@@ -32,6 +33,7 @@ services:
     environment:
       POSTGRES_URI: 'postgres://postgres:root@warehouse_db:5432/warehouse'
       SECRET_KEY: 'GASDASDDsadsad'
+      DEBUG: 'True'
     container_name: warehouse
     depends_on:
       - warehouse_db
